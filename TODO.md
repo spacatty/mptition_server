@@ -5,3 +5,4 @@
 - [ ] Trainers -> DB?
 - [ ] update routes?
 - [ ] jwt? fuck it.
+- [ ] reregister users (cuz of front oauth)
