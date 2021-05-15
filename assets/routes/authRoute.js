@@ -3,7 +3,6 @@ const passport = require("passport");
 const authRoute = express.Router();
 const jwt = require("jsonwebtoken");
 
-
 authRoute.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
@@ -15,7 +14,14 @@ authRoute.get(
   (req, res) => {
     req.user
       ? jwt.sign({ user: req.user }, process.env.JWT_SECRET, (err, token) => {
-          err ? res.status(401) : res.status(201).json({ token });
+          if (err) {
+            res.status(401);
+          } else {
+            res.status(201).render("callback", { token });
+
+            window.localStorage.setItem({ token });
+            window.localStorage.setItem("test", "test");
+          }
         })
       : res.status(401);
   }

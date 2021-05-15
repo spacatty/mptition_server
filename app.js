@@ -21,6 +21,8 @@ app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.set("view engine", "ejs");
+
 mongoose.connect(
   process.env.MONGO_CONNECT,
   { useNewUrlParser: true, useUnifiedTopology: true },
