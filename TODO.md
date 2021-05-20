@@ -1,8 +1,8 @@
 # MPT COMPETITIONS SERVER
 
 ## Important
-- [ ] get rid of passport oauth
-- [ ] Trainers -> DB?
-- [ ] update routes?
-- [ ] jwt? fuck it.
-- [ ] reregister users (cuz of front oauth)
+- [x] get rid of passport oauth
+- [x] Trainers -> DB?
+- [x] update routes?
+- [x] jwt? fuck it.
+- [x] reregister users (cuz of front oauth)

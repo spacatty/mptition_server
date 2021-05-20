@@ -1,34 +1,34 @@
 const express = require("express");
-const passport = require("passport");
 const authRoute = express.Router();
-const jwt = require("jsonwebtoken");
+const userSchema = require("../schemas/userSchema");
 
-authRoute.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-authRoute.get(
-  "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/failed" }),
-  (req, res) => {
-    req.user
-      ? jwt.sign({ user: req.user }, process.env.JWT_SECRET, (err, token) => {
-          if (err) {
-            res.status(401);
-          } else {
-            res.status(201).render("callback", { token });
-
-            window.localStorage.setItem({ token });
-            window.localStorage.setItem("test", "test");
-          }
-        })
-      : res.status(401);
-  }
-);
-
-authRoute.get("/logout", (req, res) => {
-  res.status(201).json(req.headers);
+authRoute.post("/serialize", async (req, res) => {
+  userSchema.where({ gid: req.body.googleID }).exec((err, retnUser) => {
+    if (err) {
+      res.json({ success: false, err });
+    } else {
+      if (retnUser.length === 0) {
+        try {
+          const newUser = new userSchema({
+            gid: req.body.googleID,
+            privilege: 0,
+            userData: req.body.userData,
+          });
+          newUser
+            .save()
+            .then((sU) => res.status(201).json({ success: true, sU }));
+        } catch (error) {
+          res.json({ success: false, err });
+        }
+      } else {
+        res.status(200).json({
+          success: true,
+          comps: retnUser[0].registeredCompetitions,
+          privilege: retnUser[0].privilege,
+        });
+      }
+    }
+  });
 });
 
 module.exports = authRoute;

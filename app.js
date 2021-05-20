@@ -1,12 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const passport = require("passport");
+const serveStatic = require("serve-static");
+const history = require("connect-history-api-fallback");
 
-// const serveStatic = require("serve-static");
-// const history = require("connect-history-api-fallback");
 require("dotenv").config();
-require("./auth/passport-setup");
 
 const app = express();
 
@@ -18,27 +16,25 @@ app.use(
   })
 );
 app.use(cors());
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.set("view engine", "ejs");
 
 mongoose.connect(
   process.env.MONGO_CONNECT,
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false },
   () => {
-    console.log(`+ DB`);
+    console.log(`+ DB CONENCTION`);
   }
 );
 
+mongoose.set("useCreateIndex", true);
+
 app.use("/auth", require("./assets/routes/authRoute.js"));
-app.use("/dash", require("./assets/routes/dashRoute.js"));
+app.use("/users", require("./assets/routes/usersRoute.js"));
 app.use("/news", require("./assets/routes/newsRoute.js"));
 app.use("/competitions", require("./assets/routes/competitionsRoute.js"));
 
-// app.use(history());
-// app.use(serveStatic(__dirname + "/dist/spa"));
+app.use(history());
+app.use(serveStatic(__dirname + "/dist/spa"));
 
-app.listen(process.env.PORT || 8090, () => {
-  console.log(`+ APP IN ${process.env.PORT || 8090}`);
+app.listen(process.env.PORT || 8080, () => {
+  console.log(`+ APP IN ${process.env.PORT || 8080}`);
 });
